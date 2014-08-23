@@ -9,6 +9,9 @@ public final class DashboardConstants {
 	public static final int  Zero = 0;
 	
 	public static final String PROJ_SESSION_KEY = "projects";
+	
+	public static final String PIE_CHART_TITLE = "Training Conducted";
+	public static final String BAR_CHART_TITLE = "Effective Team Analysis";
 
 
 }

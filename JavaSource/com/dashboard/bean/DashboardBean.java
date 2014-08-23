@@ -176,12 +176,12 @@ public class DashboardBean implements Serializable {
 
 	private void createAnimatedModels() {
 		barModel = initBarModel();
-		barModel.setTitle("Bar Charts");
+		barModel.setTitle(DashboardConstants.BAR_CHART_TITLE);
 		barModel.setAnimate(true);
 		barModel.setLegendPosition("ne");
 		Axis yAxis = barModel.getAxis(AxisType.Y);
 		yAxis.setMin(0);
-		yAxis.setMax(200);
+		yAxis.setMax(250);
 	}
 
 	private void createPieModel() {
@@ -203,26 +203,18 @@ public class DashboardBean implements Serializable {
 		}
 		
 
-		pieModel.setTitle("Training Conducted");
-		pieModel.setLegendPosition("e");
-		pieModel.setFill(false);
+		pieModel.setTitle(DashboardConstants.PIE_CHART_TITLE);
+		pieModel.setLegendPosition("w");
+		//pieModel.setFill(true);
+		pieModel.setMouseoverHighlight(true);
 		pieModel.setShowDataLabels(true);
-		pieModel.setDiameter(150);
+		pieModel.setDiameter(300);
 	}
 	
 	private void createCalender() {
 
 		eventModel = new DefaultScheduleModel();
-		/*eventModel.addEvent(new DefaultScheduleEvent("Champions League Match",
-				previousDay8Pm(), previousDay11Pm()));
-		eventModel.addEvent(new DefaultScheduleEvent("Birthday Party",
-				today1Pm(), today6Pm()));
-		eventModel.addEvent(new DefaultScheduleEvent("Breakfast at Tiffanys",
-				nextDay9Am(), nextDay11Am()));
-		eventModel.addEvent(new DefaultScheduleEvent(
-				"Plant the new garden stuff", theDayAfter3Pm(),
-				fourDaysLater3pm()));*/
-		
+	
 		try {
 			List<TrainingSchedule> tslist = dashboardBo.getTrainingSchedule();
 			for (TrainingSchedule trainingSchedule : tslist) {

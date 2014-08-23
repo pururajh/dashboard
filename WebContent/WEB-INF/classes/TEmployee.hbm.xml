@@ -24,7 +24,7 @@
 		ROUND(DATEDIFF(NOW(),e.JoiningDate)/365, 1) as tcsExp,
 		ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) as overalExp
 		FROM dashboardapp.temployee e
-		JOIN dashboardapp.tproject p on e.idProject = p.idTProject]]>
+		JOIN dashboardapp.rproject p on e.idProject = p.idTProject]]>
     </sql-query>
     
    

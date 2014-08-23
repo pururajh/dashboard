@@ -40,7 +40,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		<property name="mappingResources">
 			<list>
 				<value>TEmployee.hbm.xml</value>
-				<value>TProject.hbm.xml</value>
+				<value>RProject.hbm.xml</value>
 				
 				<!-- <value>TTechnology.hbm.xml</value>
 				

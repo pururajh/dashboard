@@ -18,10 +18,10 @@
 			<h:form>
 				<p:growl id="msgs" showDetail="true" />
 				<!-- p:growl id="submitgrowl" life="2000" /-->
-				<p:dashboard id="board" model="#{dashboardBean.model}">
+				<p:dashboard id="board" model="#{dashboardBean.model}" >
 					<p:ajax event="reorder" listener="#{dashboardBean.manageReOrder}"
 						update="msgs" />
-
+					
 					<p:panel id="employee" header="Employee" cellpadding="5">
 						<p:panelGrid columns="4">
 							<p:outputLabel value="First Name" for="acProject" />
@@ -92,7 +92,6 @@
 					</p:panel>
 
 					<p:panel id="projects" header="Projects">
-						<h:outputText value="Projects Content" />
 						<p:chart type="bar" model="#{dashboardBean.barModel}"
 							style="width:400px;" />
 					</p:panel>
@@ -149,6 +148,7 @@
 							</h:panelGrid>
 						</p:dialog>
 					</p:panel>
+					
 				</p:dashboard>
 			</h:form>
 		</p:fieldset>
