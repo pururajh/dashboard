@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+  <class name="com.dashboard.vo.EmployeeVo" table="temployee" schema="dashboardapp">
+    <id name="id" column="idEmployee">
+      <generator class="increment" />
+    </id>
+    <property name="firstName" column="FirstName" not-null="true" />
+    <property name="lastName" column="LastName" not-null="true" />
+    <property name="joiningDate" column="JoiningDate" not-null="true" />
+    <property name="jobStartDate" column="JobStartDate" not-null="true" />
+  
+    <one-to-one  name="idProject"  entity-name="project-entity"  /> 
+  </class>
+   <sql-query name="findEmployeeNativeSQL">
+	<return-scalar column="empId" type="int" />
+	<return-scalar column="empName" type="string" />
+	<return-scalar column="projName" type="string" />
+	<return-scalar column="tcsExp" type="float" />
+	<return-scalar column="overalExp" type="float" />
+	<![CDATA[SELECT e.idEmployee as empId, concat(e.LastName, "," ,
+		e.FirstName) as empName, p.Name as projName, 
+		ROUND(DATEDIFF(NOW(),e.JoiningDate)/365, 1) as tcsExp,
+		ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) as overalExp
+		FROM dashboardapp.temployee e
+		JOIN dashboardapp.tproject p on e.idProject = p.idTProject]]>
+    </sql-query>
+    
+   
+    <sql-query name="findNoofTrainingGt15">
+	<return-scalar column="noOfTraining" type="int" />
+	<return-scalar column="experience" type="string" />
+	<![CDATA[SELECT COUNT(s.conductedby) noOfTraining, ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) experience
+  		FROM dashboardapp.temployee e
+    	JOIN dashboardapp.ttrainingschedule s on e.idEmployee = s.conductedby
+      JOIN dashboardapp.rtraining t on s.idTraining = t.idTTraining
+		group by  experience >15
+		having experience  >15]]>
+    </sql-query>
+    
+      <sql-query name="findNoofTrainingBn10t15">
+	<return-scalar column="noOfTraining" type="int" />
+	<return-scalar column="experience" type="string" />
+	<![CDATA[SELECT COUNT(s.conductedby) noOfTraining, ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) experience
+  		FROM dashboardapp.temployee e
+    	JOIN dashboardapp.ttrainingschedule s on e.idEmployee = s.conductedby
+        JOIN dashboardapp.rtraining t on s.idTraining = t.idTTraining
+		group by  experience BETWEEN  10 AND  15
+		having experience  BETWEEN  10 AND  15]]>
+    </sql-query>
+    
+      <sql-query name="findNoofTrainingBn5t10">
+	<return-scalar column="noOfTraining" type="int" />
+	<return-scalar column="experience" type="string" />
+	<![CDATA[SELECT COUNT(s.conductedby) noOfTraining, ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) experience
+  		FROM dashboardapp.temployee e
+    	JOIN dashboardapp.ttrainingschedule s on e.idEmployee = s.conductedby
+        JOIN dashboardapp.rtraining t on s.idTraining = t.idTTraining
+		group by  experience BETWEEN  5 AND  10
+		having experience  BETWEEN  5 AND  10]]>
+    </sql-query>
+    
+      <sql-query name="findNoofTrainingLt5">
+	<return-scalar column="noOfTraining" type="int" />
+	<return-scalar column="experience" type="string" />
+	<![CDATA[SELECT COUNT(s.conductedby) noOfTraining, ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) experience
+  		FROM dashboardapp.temployee e
+    	JOIN dashboardapp.ttrainingschedule s on e.idEmployee = s.conductedby
+        JOIN dashboardapp.rtraining t on s.idTraining = t.idTTraining
+		group by  experience <5
+		having experience  <5]]>
+    </sql-query>
+    
+    <sql-query name="findTrainingSchedule">
+	<return-scalar column="Name" type="string" />
+	<return-scalar column="StartDate" type="date"/>
+	<return-scalar column="EndDate" type="date" />
+	<![CDATA[select t.Name, s.StartDate, s.EndDate FROM dashboardapp.temployee e
+    	JOIN dashboardapp.ttrainingschedule s on e.idEmployee = s.conductedby
+      JOIN dashboardapp.rtraining t on s.idTraining = t.idTTraining]]>
+    </sql-query>
+    
+    <!-- SELECT e.idEmployee, ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1)m , e.FirstName, SUM(t.NoofTraining)
+  	FROM dashboardapp.temployee e
+    JOIN dashboardapp.ttraining t on e.idEmployee = t.conductedby
+where  ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) >15
+group by t.conductedby
+
+SELECT SUM(t.NoofTraining) , ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) experience
+  	FROM dashboardapp.temployee e
+    JOIN dashboardapp.ttraining t on e.idEmployee = t.conductedby
+group by  experience BETWEEN  5 AND  10
+having experience  BETWEEN  5 AND  10
+
+SELECT e.idEmployee, ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1)m , e.FirstName, SUM(t.NoofTraining)
+  	FROM dashboardapp.temployee e
+    JOIN dashboardapp.ttraining t on e.idEmployee = t.conductedby
+where  ROUND(DATEDIFF(NOW(),e.JobStartDate)/365, 1) BETWEEN  5 AND  10
+group by t.conductedby -->
+
+  
+</hibernate-mapping>

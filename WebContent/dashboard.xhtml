@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>Dashboard</title>
+</h:head>
+<h:body>
+
+	<div align="center">
+		<h1 class="ui-widget-header ui-corner-all" align="center">Resource
+			Dashboard</h1>
+		<br />
+		<p:fieldset>
+
+			<h:form>
+				<p:growl id="msgs" showDetail="true" />
+				<!-- p:growl id="submitgrowl" life="2000" /-->
+				<p:dashboard id="board" model="#{dashboardBean.model}">
+					<p:ajax event="reorder" listener="#{dashboardBean.manageReOrder}"
+						update="msgs" />
+
+					<p:panel id="employee" header="Employee" cellpadding="5">
+						<p:panelGrid columns="4">
+							<p:outputLabel value="First Name" for="acProject" />
+							<p:inputText id="eFname" value="#{dashboardBean.empvo.firstName}" />
+							<p:outputLabel value="Last Name" for="acProject" />
+							<p:inputText id="lFname" value="#{dashboardBean.empvo.lastName}" />
+							<p:outputLabel value="TCS Joining Date" for="tcsDatepopup" />
+							<p:calendar id="tcsDatepopup"
+								value="#{dashboardBean.empvo.joiningDate}"
+								pattern="MM/dd/yyyy HH:mm:ss" />
+							<p:outputLabel value="Joining Date" for="exprStartpopup" />
+							<p:calendar id="exprStartpopup"
+								value="#{dashboardBean.empvo.jobStartDate}"
+								pattern="MM/dd/yyyy HH:mm:ss" />
+							<p:outputLabel value="Project Name" for="acProject" />
+							<p:autoComplete id="acProject" value="#{dashboardBean.empvo.idProject}"
+								completeMethod="#{dashboardBean.completeProjectname}"
+								var="projvo" itemLabel="#{projvo.name}" itemValue="#{projvo}"
+								converter="projectConverter" forceSelection="true" />
+								
+							<p:commandButton value="save" id="save" actionListener="#{dashboardBean.createEmployee}" ajax="false" />
+							
+
+						</p:panelGrid>
+					</p:panel>
+
+					<p:panel id="technology" header="Technology">
+						<p:dataTable var="employee" value="#{dashboardBean.emplList}"
+							paginator="true" rows="5">
+							<p:column headerText="Id" sortBy="#{employee.empId}"
+								filterBy="#{employee.empId}">
+								<h:outputText value="#{employee.empId}" />
+							</p:column>
+							<p:column headerText="Name" sortBy="#{employee.empName}"
+								filterBy="#{employee.empName}">
+								<p:inplace id="name" editor="true">
+									<p:inputText value="#{employee.empName}" required="true"
+										label="text" />
+								</p:inplace>
+							</p:column>
+							<p:column headerText="primay Project Name"
+								sortBy="#{employee.projName}" filterBy="#{employee.projName}">
+								<h:outputText value="#{employee.projName}" />
+							</p:column>
+							<p:column headerText="Tcs Experience" sortBy="#{employee.tcsExp}"
+								filterBy="#{employee.tcsExp}">
+								<h:outputText value="#{employee.tcsExp}" />
+							</p:column>
+							<p:column headerText="Overal Experience"
+								sortBy="#{employee.overalExp}" filterBy="#{employee.overalExp}">
+								<h:outputText value="#{employee.overalExp}" />
+							</p:column>
+
+							<p:column headerText="Training Conducted">
+								<h:outputText value="" />
+							</p:column>
+							<p:column headerText="Training Attended">
+								<h:outputText value="" />
+							</p:column>
+
+						</p:dataTable>
+
+					</p:panel>
+
+					<p:panel id="experience" header="Experience">
+						<p:chart type="pie" model="#{dashboardBean.pieModel}"
+							style="width:400px;height:300px" />
+					</p:panel>
+
+					<p:panel id="projects" header="Projects">
+						<h:outputText value="Projects Content" />
+						<p:chart type="bar" model="#{dashboardBean.barModel}"
+							style="width:400px;" />
+					</p:panel>
+
+					<p:panel id="training" header="Training">
+						<p:growl id="messages" showDetail="true" />
+						<h:panelGrid columnClasses="value"
+							style="width:400px;height:300px">
+							<h3 style="margin-top: 0">Training Schedule</h3>
+							<p:schedule id="schedule" value="#{dashboardBean.eventModel}"
+								widgetVar="myschedule">
+								<p:ajax event="dateSelect"
+									listener="#{dashboardBean.onDateSelect}" update="eventDetails"
+									oncomplete="PF('eventDialog').show();" />
+								<p:ajax event="eventSelect"
+									listener="#{dashboardBean.onEventSelect}" update="eventDetails"
+									oncomplete="PF('eventDialog').show();" />
+								<p:ajax event="eventMove"
+									listener="#{dashboardBean.onEventMove}" update="messages" />
+								<p:ajax event="eventResize"
+									listener="#{dashboardBean.onEventResize}" update="messages" />
+							</p:schedule>
+
+						</h:panelGrid>
+						<p:draggable for="training" grid="20,40" />
+
+						<p:dialog widgetVar="eventDialog" header="Event Details"
+							showEffect="clip" hideEffect="clip">
+							<h:panelGrid id="eventDetails" columns="2">
+								<h:outputLabel for="title" value="Title:" />
+								<p:inputText id="title" value="#{dashboardBean.event.title}"
+									required="true" />
+
+								<h:outputLabel for="from" value="From:" />
+								<p:inputMask id="from" value="#{dashboardBean.event.startDate}"
+									mask="99/99/9999">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputMask>
+
+								<h:outputLabel for="to" value="To:" />
+								<p:inputMask id="to" value="#{dashboardBean.event.endDate}"
+									mask="99/99/9999">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputMask>
+
+								<h:outputLabel for="allDay" value="All Day:" />
+								<h:selectBooleanCheckbox id="allDay"
+									value="#{dashboardBean.event.allDay}" />
+
+								<p:commandButton type="reset" value="Reset" />
+								<p:commandButton id="addButton" value="Save"
+									actionListener="#{dashboardBean.addEvent}"
+									oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+							</h:panelGrid>
+						</p:dialog>
+					</p:panel>
+				</p:dashboard>
+			</h:form>
+		</p:fieldset>
+	</div>
+
+</h:body>
+</html>

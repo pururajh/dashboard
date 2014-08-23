@@ -1,0 +1,78 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>/resources/config/database/properties/database.properties
+			</value>
+		</property>
+	</bean>
+
+	<bean id="dashboardDaoImpl" class="com.dashboard.dao.DashboardDaoImpl"
+		lazy-init="default" dependency-check="default" autowire="default">
+		<property name="sessionFactory" ref="dashboardSessionFactory">			
+		</property>
+		
+	</bean>
+
+	<bean id="dashboardDao" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="target">
+			<ref local="dashboardDaoImpl" />
+		</property>	
+	</bean>
+	
+	
+	<!-- Hibernate session factory -->
+	<bean id="dashboardSessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<!-- <ref bean="dataSource"/> -->
+			<ref local="dashboardDataSourceProxy" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>TEmployee.hbm.xml</value>
+				<value>TProject.hbm.xml</value>
+				
+				<!-- <value>TTechnology.hbm.xml</value>
+				
+				<value>TTraining.hbm.xml</value> -->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="dashboardDataSourceProxy"
+		class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+		<property name="targetDataSource">
+			<ref bean="dataSource"></ref>
+		</property>
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/dashboardapp" />
+		<property name="username" value="dashboard" />
+		<property name="password" value="dashboard123" />
+	</bean>
+	<!-- <bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>-->
+	
+
+	
+
+
+</beans>
