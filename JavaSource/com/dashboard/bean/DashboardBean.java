@@ -197,7 +197,7 @@ public class DashboardBean implements Serializable {
 		barModel.setLegendPosition("ne");
 		Axis yAxis = barModel.getAxis(AxisType.Y);
 		yAxis.setMin(0);
-		yAxis.setMax(250);
+		yAxis.setMax(15);
 	}
 
 	private void createPieModel() {
@@ -246,6 +246,8 @@ public class DashboardBean implements Serializable {
 	}
 
 	private BarChartModel initBarModel() {
+		
+
 		BarChartModel model = new BarChartModel();
 		List<TrainingAttaine> attaineList = new ArrayList<TrainingAttaine>();
 		List<TrainingConducted> trainingConductedList = new ArrayList<TrainingConducted>();
@@ -265,25 +267,19 @@ public class DashboardBean implements Serializable {
 		traingConduct.setLabel("Training Conducted");
 		for(TrainingConducted traingConducted : trainingConductedList) 
 		 traingConduct.set(traingConducted.getProject(), traingConducted.getNumberOfEmployee());
-		
-		/*boys.set("2005", 100);
-		boys.set("2006", 44);
-		boys.set("2007", 150);
-		boys.set("2008", 25);*/
+	
 
 		ChartSeries traininAttaineChart = new ChartSeries();
 		traininAttaineChart.setLabel("Training Attended");
 		for(TrainingAttaine trainingAttainee: attaineList)
 			traininAttaineChart.set(trainingAttainee.getProject(), trainingAttainee.getCountOfEmployee());
-	/*	girls.set("2004", 52);
-		girls.set("2005", 60);
-		girls.set("2006", 110);
-		girls.set("2007", 135);
-		girls.set("2008", 120);*/
+	
+      
+
 
 		model.addSeries(traingConduct);
 		model.addSeries(traininAttaineChart);
-
+	
 		return model;
 	}
 
