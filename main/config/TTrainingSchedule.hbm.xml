@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+  <class name="com.dashboard.vo.TrainingSchedule" table="ttrainingschedule" schema="dashboardapp">
+    <id name="id" column="idTrainingSchedule">
+      <generator class="increment" />
+    </id>
+    <many-to-one name="traing" column="idTraining" class="com.dashboard.vo.TrainingVo" not-null="true" />
+    <property name="startDate" column="StartDate" not-null="false" />
+    <property name="endDate" column="EndDate" not-null="false" />
+    <many-to-one name="tEmployee" column="ConductedBy" class="com.dashboard.vo.EmployeeVo" not-null="false" />
+  </class>
+</hibernate-mapping>

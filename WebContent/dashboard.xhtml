@@ -25,17 +25,18 @@
 					<p:panel id="employee" header="Employee" cellpadding="5">
 						<p:panelGrid columns="4">
 							<p:outputLabel value="First Name" for="acProject" />
-							<p:inputText id="eFname" value="#{dashboardBean.empvo.firstName}" />
+							<p:inputText id="eFname" value="#{dashboardBean.empvo.firstName}"/>
 							<p:outputLabel value="Last Name" for="acProject" />
 							<p:inputText id="lFname" value="#{dashboardBean.empvo.lastName}" />
 							<p:outputLabel value="TCS Joining Date" for="tcsDatepopup" />
 							<p:calendar id="tcsDatepopup"
-								value="#{dashboardBean.empvo.joiningDate}"
-								pattern="MM/dd/yyyy HH:mm:ss" />
+								value="#{dashboardBean.empvo.joiningDate}"  converter="timestampConverter"  pattern="MM/dd/yyyy HH:mm:ss">
+							</p:calendar>
 							<p:outputLabel value="Joining Date" for="exprStartpopup" />
 							<p:calendar id="exprStartpopup"
-								value="#{dashboardBean.empvo.jobStartDate}"
-								pattern="MM/dd/yyyy HH:mm:ss" />
+								value="#{dashboardBean.empvo.jobStartDate}" pattern="MM/dd/yyyy HH:mm:ss" converter="timestampConverter">
+								 
+							</p:calendar>
 							<p:outputLabel value="Project Name" for="acProject" />
 							<p:autoComplete id="acProject" value="#{dashboardBean.empvo.idProject}"
 								completeMethod="#{dashboardBean.completeProjectname}"
@@ -48,7 +49,7 @@
 						</p:panelGrid>
 						<p:draggable for="employee" grid="20,40" />
 					</p:panel>
-
+					
 					<p:panel id="technology" header="Technology">
 						<p:dataTable var="employee" value="#{dashboardBean.emplList}"
 							paginator="true" rows="5">
@@ -64,8 +65,10 @@
 								</p:inplace>
 							</p:column>
 							<p:column headerText="primay Project Name"
-								sortBy="#{employee.projName}" filterBy="#{employee.projName}">
-								<h:outputText value="#{employee.projName}" />
+								sortBy="#{employee.projName}" filterBy="#{employee.projName}" label="text">
+								<p:inplace id="projNam" editor="true">
+									<p:inputText value="#{employee.projName}" />
+								</p:inplace>
 							</p:column>
 							<p:column headerText="Tcs Experience" sortBy="#{employee.tcsExp}"
 								filterBy="#{employee.tcsExp}">
@@ -87,7 +90,6 @@
 						<p:draggable for="technology" grid="20,40" />
 
 					</p:panel>
-
 					<p:panel id="experience" header="Experience">
 						<p:chart type="pie" model="#{dashboardBean.pieModel}"
 							style="width:400px;height:300px" />
@@ -99,7 +101,7 @@
 							style="width:400px;" />
 						<p:draggable for="projects" grid="20,40" />
 					</p:panel>
-
+					
 					<p:panel id="training" header="Training">
 						<p:growl id="messages" showDetail="true" />
 						<h:panelGrid columnClasses="value"
@@ -120,14 +122,19 @@
 							</p:schedule>
 
 						</h:panelGrid>
+						
 						<p:draggable for="training" grid="20,40" />
 
 						<p:dialog widgetVar="eventDialog" header="Event Details"
 							showEffect="clip" hideEffect="clip">
 							<h:panelGrid id="eventDetails" columns="2">
 								<h:outputLabel for="title" value="Title:" />
-								<p:inputText id="title" value="#{dashboardBean.event.title}"
-									required="true" />
+								<p:autoComplete id="title" value="#{dashboardBean.traingVO}"
+								completeMethod="#{dashboardBean.completeTrainingTitle}" 
+								var="trainingvo" itemLabel="#{trainingvo.name}" itemValue="#{trainingvo}"
+								converter="trainingConverter" forceSelection="true" >
+									
+								</p:autoComplete>
 
 								<h:outputLabel for="from" value="From:" />
 								<p:inputMask id="from" value="#{dashboardBean.event.startDate}"
@@ -148,10 +155,13 @@
 								<p:commandButton type="reset" value="Reset" />
 								<p:commandButton id="addButton" value="Save"
 									actionListener="#{dashboardBean.addEvent}"
-									oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+									oncomplete="PF('myschedule').update();PF('eventDialog').hide();"/>
+									
+								
 							</h:panelGrid>
 						</p:dialog>
-					</p:panel>
+						</p:panel>
+						
 					
 				</p:dashboard>
 			</h:form>

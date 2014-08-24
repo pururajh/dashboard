@@ -7,12 +7,10 @@ public class TrainingSchedule implements Serializable{
 	private String trainingName;
 	private Date startDate;
 	private Date endDate;
-	public String getTrainingName() {
-		return trainingName;
-	}
-	public void setTrainingName(String trainingName) {
-		this.trainingName = trainingName;
-	}
+	private Long id;
+	private EmployeeVo tEmployee;
+	private TrainingVo traing;
+	
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -29,6 +27,31 @@ public class TrainingSchedule implements Serializable{
 	public String toString() {
 		return "TrainingSchedule [trainingName=" + trainingName
 				+ ", startDate=" + startDate + ", endDate=" + endDate + "]";
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public EmployeeVo gettEmployee() {
+		return tEmployee;
+	}
+	public void settEmployee(EmployeeVo tEmployee) {
+		this.tEmployee = tEmployee;
+	}
+	public String getTrainingName() {
+		return trainingName;
+	}
+	public void setTrainingName(String trainingName) {
+		this.trainingName = trainingName;
+	}
+	public TrainingVo getTraing() {
+		return traing;
+	}
+	public void setTraing(TrainingVo traing) {
+		this.traing = traing;
 	}
 	
 	

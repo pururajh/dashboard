@@ -2,13 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-  <class name="com.dashboard.vo.ProjectVo" table="rproject" schema="dashboardapp">
-    <id name="id" column="idTProject">
+  <class name="com.dashboard.vo.TrainingVo" table="rtraining" schema="dashboardapp">
+    <id name="idTraining" column="idTTraining">
       <generator class="assigned" />
     </id>
+     <property name="idTechnology" column="idTechnology" not-null="true" />
     <property name="name" column="Name" not-null="true" />
-   
   </class>
-
-
 </hibernate-mapping>

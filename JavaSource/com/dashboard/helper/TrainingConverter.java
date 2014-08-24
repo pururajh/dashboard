@@ -12,14 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dashboard.bo.DashboardBo;
 import com.dashboard.constant.DashboardConstants;
-import com.dashboard.dao.DashboardDaoImpl;
 import com.dashboard.vo.ProjectVo;
+import com.dashboard.vo.TrainingVo;
 
+@FacesConverter("trainingConverter")
+public class TrainingConverter implements Converter {
 
-@FacesConverter("projectConverter")
-public class ProjectConverter implements Converter{
-	
-	private List<ProjectVo> proVos;
+private List<TrainingVo> trainingVos;
 	
 	@Autowired
 	private DashboardBo  dashboardbo;
@@ -28,16 +27,15 @@ public class ProjectConverter implements Converter{
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		try{
 		if (value != null) {
-			System.out.println("selected value-->"+value);
 			HttpSession session = (HttpSession) context.getCurrentInstance().getExternalContext().getSession(true);
-			List<ProjectVo> projs = (List<ProjectVo>) session.getAttribute(DashboardConstants.PROJ_SESSION_KEY);
-			for (ProjectVo projectVo : projs) {
-				if(projectVo.getId() == Integer.parseInt(value)){
-					System.out.println("selected project-->"+projectVo);
-					return projectVo;
+			List<TrainingVo> training = (List<TrainingVo>) session.getAttribute(DashboardConstants.TRAIN_SESSION_KEY);
+			for (TrainingVo trainingVo : training) {
+				if(trainingVo.getIdTraining() == Integer.parseInt(value)){
+					System.out.println("selected project-->"+trainingVo);
+					return trainingVo;
 				}
 			}
-			System.out.println("selected value List-->"+projs);
+			System.out.println("selected value List-->"+trainingVos);
 			
 		}
 		}catch (Exception e){
@@ -53,7 +51,7 @@ public class ProjectConverter implements Converter{
 		if (value != null) {
 			String name = null;
 			try {
-				name = String.valueOf(((ProjectVo) value).getId());
+				name = String.valueOf(((TrainingVo) value).getIdTraining());
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -65,14 +63,13 @@ public class ProjectConverter implements Converter{
 			return null;
 	}
 
-	public List<ProjectVo> getProVos() {
-		return proVos;
+	public List<TrainingVo> getTrainingVos() {
+		return trainingVos;
 	}
 
-	public void setProVos(List<ProjectVo> proVos) {
-		this.proVos = proVos;
+	public void setTrainingVos(List<TrainingVo> trainingVos) {
+		this.trainingVos = trainingVos;
 	}
-	
-	
 
+	
 }

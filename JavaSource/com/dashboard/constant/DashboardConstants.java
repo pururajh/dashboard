@@ -13,7 +13,12 @@ public final class DashboardConstants {
 	public static final String PIE_CHART_TITLE = "Training Conducted";
 	public static final String BAR_CHART_TITLE = "Effective Team Analysis";
 	
-	public static final String FACEBOOK_APP_TOKEN = "CAACEdEose0cBADZCkNP22ZAMkSZCcsyo0gfxhtZAZCZAuuYZCmzwBFq2k6zR8n33FxbtRtaHKAWhjRQIYR8YwZBES3xX2gJZARh5PLAKiOVjZC6ldYahNaHBWJ7dl29hbsDWPu17mHfTjCzgiSxo6ZAo2U7AVEP61P1IAZBZBOmQtwAZBGGnMDspXwzJnpV8XR4dUXQp6Mzu48dkg1OO4dZC7KIPlXiyUrB2IukHlQZD";
+
+	public static final String TRAIN_SESSION_KEY = "training";
+	
+
+	
+	public static final String FACEBOOK_APP_TOKEN = "CAACEdEose0cBAGaNGF19oHrNg6JuX74SIeI3nffZA3JrZCukhZCNVyhsac2QzHFVBwaEybVNyOZBK6OySWNwFPtSrwgzEsBEMnplPdNfHSmuIzT7eJrofvAKuWVTtUUDoCNLUjrivpWN7paNgMuIWZBaOB8b8ktuLwoBWCAbrpMTSTlUJXSmxauHZCCoiRoq4wYtrLhSSunza5NZCwC9eRLhh8E6zZBanZCgZD";
 	public static final String FACEBOOK_APP_ID = "673275916095627";
 	public static final String FACEBOOK_APP_SECRET_KEY = "4ee12e7f1866af24485f9f301257a607";
 	public static final String FACEBOOK_PUBLISH_TO_ME_STRING = "me/feed";

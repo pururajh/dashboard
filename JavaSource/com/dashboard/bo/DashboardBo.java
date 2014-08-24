@@ -11,46 +11,52 @@ import com.dashboard.vo.Employee;
 import com.dashboard.vo.EmployeeVo;
 import com.dashboard.vo.ProjectVo;
 import com.dashboard.vo.TrainingSchedule;
+import com.dashboard.vo.TrainingVo;
 
 @Service
 public class DashboardBo {
 	@Autowired
 	private DashboardDaoImpl dashboardDao;
-	
-	public List<Employee> getEmployeeList() throws Exception{
+
+	public List<Employee> getEmployeeList() throws Exception {
 		return dashboardDao.getEmployees();
-		
+
 	}
-	
-	public Map<String, Integer> getPieChartMap() throws Exception{
+
+	public Map<String, Integer> getPieChartMap() throws Exception {
 		return dashboardDao.getTrainingDetailsOfEmpl();
-		
+
 	}
-	
-	public List<ProjectVo> getProjects() throws Exception{
+
+	public List<ProjectVo> getProjects() throws Exception {
 		return dashboardDao.getProjects();
-		
+
 	}
-	
-	public List<TrainingSchedule> getTrainingSchedule() throws Exception{
+
+	public List<TrainingSchedule> getTrainingSchedule() throws Exception {
 		return dashboardDao.getTrainingSchedule();
-		
+
 	}
-	
-	public ProjectVo findProjectById(int id) throws Exception{
+
+	public TrainingSchedule saveTrainingSchedule(TrainingSchedule schedule)
+			throws Exception {
+		return dashboardDao.saveTrainingSchedule(schedule);
+
+	}
+
+	public List<TrainingVo> getTrainingList() throws Exception {
+		return dashboardDao.getTrainingList();
+	}
+
+	public ProjectVo findProjectById(int id) throws Exception {
 		return dashboardDao.findProjectById(id);
-		
+
 	}
-	
-	
-	
-	public void createEmployee(EmployeeVo empvo) throws Exception{
+
+	public void createEmployee(EmployeeVo empvo) throws Exception {
 		dashboardDao.createEmployee(empvo);
-		
+
 	}
-	
-	
-	
 
 	public DashboardDaoImpl getDashboardDao() {
 		return dashboardDao;
@@ -59,6 +65,9 @@ public class DashboardBo {
 	public void setDashboardDao(DashboardDaoImpl dashboardDao) {
 		this.dashboardDao = dashboardDao;
 	}
-
 	
+	public Map<String,List> fetchtrainingAttaindAndCondectedList() throws Exception {
+		return dashboardDao.fetchtrainingAttaindAndCondectedList();
+	}
+
 }

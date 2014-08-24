@@ -34,6 +34,7 @@ import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.PieChartModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.jsf.FacesContextUtils;
 
 import com.dashboard.bo.DashboardBo;
@@ -41,7 +42,10 @@ import com.dashboard.constant.DashboardConstants;
 import com.dashboard.vo.Employee;
 import com.dashboard.vo.EmployeeVo;
 import com.dashboard.vo.ProjectVo;
+import com.dashboard.vo.TrainingAttaine;
+import com.dashboard.vo.TrainingConducted;
 import com.dashboard.vo.TrainingSchedule;
+import com.dashboard.vo.TrainingVo;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
@@ -68,6 +72,7 @@ public class DashboardBean implements Serializable {
 	
 	private List<Employee> emplList;
 	private List<ProjectVo> projectList;
+	private List<TrainingVo> trainingList;
 
 	private PieChartModel pieModel;
 	private DashboardModel model;
@@ -75,6 +80,7 @@ public class DashboardBean implements Serializable {
 
 	private ScheduleModel eventModel;
 	private ScheduleEvent event = new DefaultScheduleEvent();
+	private TrainingVo traingVO;
 
 	@PostConstruct
 	public void init() {
@@ -100,17 +106,26 @@ public class DashboardBean implements Serializable {
 		ApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
 		dashboardBo = (DashboardBo) ctx.getBean("dashboardBo");
 		try {
-			emplList = dashboardBo.getEmployeeList();
+			initializeMethods();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		
+		
+
+	}
+	
+	/**
+	 * Initialize Methods
+	 */
+	private void initializeMethods() throws Exception{
+		emplList = dashboardBo.getEmployeeList();
 		
 		createCalender();
 		
 		createPieModel();
 
 		createAnimatedModels();
-
 	}
 
 	public String go() {
@@ -121,7 +136,9 @@ public class DashboardBean implements Serializable {
 	public String createEmployee(ActionEvent actionEvent) {
 		try{
 			System.out.println("Create employee started..");
+			//EmployeeVo vo = empvo;
 			dashboardBo.createEmployee(empvo);
+			initializeMethods();
 		} catch (Exception e){
 			e.printStackTrace();
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Employee Saved Failed!!".concat(e.getMessage()),  null);
@@ -230,25 +247,42 @@ public class DashboardBean implements Serializable {
 
 	private BarChartModel initBarModel() {
 		BarChartModel model = new BarChartModel();
-
-		ChartSeries boys = new ChartSeries();
-		boys.setLabel("Training Conducted");
-		boys.set("2004", 120);
-		boys.set("2005", 100);
+		List<TrainingAttaine> attaineList = new ArrayList<TrainingAttaine>();
+		List<TrainingConducted> trainingConductedList = new ArrayList<TrainingConducted>();
+        try {
+			Map<String,List> attainAndConductedList = dashboardBo.fetchtrainingAttaindAndCondectedList();
+			if(!CollectionUtils.isEmpty(attainAndConductedList)){
+				trainingConductedList = attainAndConductedList.get("conductList");
+				attaineList = attainAndConductedList.get("attaineList");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+        
+        
+		ChartSeries traingConduct = new ChartSeries();
+		traingConduct.setLabel("Training Conducted");
+		for(TrainingConducted traingConducted : trainingConductedList) 
+		 traingConduct.set(traingConducted.getProject(), traingConducted.getNumberOfEmployee());
+		
+		/*boys.set("2005", 100);
 		boys.set("2006", 44);
 		boys.set("2007", 150);
-		boys.set("2008", 25);
+		boys.set("2008", 25);*/
 
-		ChartSeries girls = new ChartSeries();
-		girls.setLabel("Training Attended");
-		girls.set("2004", 52);
+		ChartSeries traininAttaineChart = new ChartSeries();
+		traininAttaineChart.setLabel("Training Attended");
+		for(TrainingAttaine trainingAttainee: attaineList)
+			traininAttaineChart.set(trainingAttainee.getProject(), trainingAttainee.getCountOfEmployee());
+	/*	girls.set("2004", 52);
 		girls.set("2005", 60);
 		girls.set("2006", 110);
 		girls.set("2007", 135);
-		girls.set("2008", 120);
+		girls.set("2008", 120);*/
 
-		model.addSeries(boys);
-		model.addSeries(girls);
+		model.addSeries(traingConduct);
+		model.addSeries(traininAttaineChart);
 
 		return model;
 	}
@@ -271,33 +305,88 @@ public class DashboardBean implements Serializable {
 		return calendar.getTime();
 	}
 
-	public void addEvent(ActionEvent actionEvent) {
-		if (event.getId() == null)
-			eventModel.addEvent(event);
-		else
-			eventModel.updateEvent(event);
-		/** Build facebook message if a new training added in the calender */
-		if (event != null && event.getTitle() != null
-				&& event.getTitle().length() > 0) {
-			StringBuffer scrapmessage = new StringBuffer();
-			scrapmessage.append("HI Team, The training titled ")
-					.append(event.getTitle().toUpperCase())
-					.append(" is scheduled from ").append(event.getStartDate())
-					.append(" to ").append(event.getEndDate())
-					.append("... Thanks, Admin Team");
-			/** Call facebook to share the training schedule */
-			FacebookClient client = new DefaultFacebookClient(
-					DashboardConstants.FACEBOOK_APP_TOKEN);
-			FacebookType publishMessageResponse = client.publish(
-					DashboardConstants.FACEBOOK_PUBLISH_TO_ME_STRING,
-					FacebookType.class,
-					Parameter.with("message", scrapmessage.toString()));
-			System.out.println("Published message ID: "
-					+ publishMessageResponse.getId());
-		}
+	private Calendar today() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DATE), 0, 0, 0);
 
-		event = new DefaultScheduleEvent();
+		return calendar;
 	}
+
+	/*private Date previousDay8Pm() {
+		Calendar t = (Calendar) today().clone();
+		t.set(Calendar.AM_PM, Calendar.PM);
+		t.set(Calendar.DATE, t.get(Calendar.DATE) - 1);
+		t.set(Calendar.HOUR, 8);
+
+		return t.getTime();
+	}*/
+	
+	private void publishToFacebook(ScheduleEvent event) {
+		/** Build facebook message */
+		StringBuffer scrapmessage = new StringBuffer();
+		scrapmessage
+				.append("HI Team, The TCS training ")
+				.append(" is scheduled from ")
+				.append(event.getStartDate())
+				.append(" to ")
+				.append(event.getEndDate())
+				.append(" Please check your Dashboard Calender!!! Thanks, Admin Team");
+		/** Call facebook to share the training schedule */
+		FacebookClient client = new DefaultFacebookClient(
+				DashboardConstants.FACEBOOK_APP_TOKEN);
+		FacebookType publishMessageResponse = client.publish(
+				DashboardConstants.FACEBOOK_PUBLISH_TO_ME_STRING,
+				FacebookType.class,
+				Parameter.with("message", scrapmessage.toString()));
+		System.out.println("Published message ID: "
+				+ publishMessageResponse.getId());
+
+	}
+
+
+	public void addEvent(ActionEvent actionEvent) {
+        if(event.getId() == null) {
+        	
+            eventModel.addEvent(event);
+            //Save Event
+            TrainingSchedule schedule = new TrainingSchedule();
+            schedule.setEndDate(event.getEndDate());
+            schedule.setStartDate(event.getStartDate());
+            schedule.setTraing(traingVO);
+            try {
+				dashboardBo.saveTrainingSchedule(schedule);
+				publishToFacebook(event);
+				createCalender();
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        else{
+            eventModel.updateEvent(event);
+            
+            //Save Event
+            TrainingSchedule schedule = new TrainingSchedule();
+            schedule.setEndDate(event.getEndDate());
+            schedule.setStartDate(event.getStartDate());
+            schedule.setTraing(traingVO);
+            try {
+				dashboardBo.saveTrainingSchedule(schedule);
+				publishToFacebook(event);
+				createCalender();
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        event = new DefaultScheduleEvent();
+     
+    }
      
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();
@@ -319,8 +408,6 @@ public class DashboardBean implements Serializable {
         addMessage(message);
     }
   
-
-     
     public int getRandomPrice() {
         return (int) (Math.random() * 100000);
     }
@@ -440,5 +527,40 @@ public class DashboardBean implements Serializable {
 		this.projvo = projvo;
 	}
 	
+	public List<TrainingVo> completeTrainingTitle(String query) {
+		//List<ProjectVo> projectList = null;
 	
+		try{
+			if(trainingList==null || trainingList.size()==0){
+				trainingList = dashboardBo.getTrainingList();
+				
+				HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+				session.setAttribute(DashboardConstants.TRAIN_SESSION_KEY, trainingList);
+				
+			}
+			System.out.println( "List of training -->"+trainingList);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+        List<TrainingVo> filteredTrainning = new ArrayList<TrainingVo>();
+        
+        for (int i = 0; i < trainingList.size(); i++) {
+            TrainingVo selected = trainingList.get(i);
+            if(selected.getName().toLowerCase().startsWith(query)) {
+            	filteredTrainning.add(selected);
+            }
+        }
+        return filteredTrainning;
+		
+	}
+
+	public TrainingVo getTraingVO() {
+		return traingVO;
+	}
+
+	public void setTraingVO(TrainingVo traingVO) {
+		this.traingVO = traingVO;
+	}
+	
+		
 }
