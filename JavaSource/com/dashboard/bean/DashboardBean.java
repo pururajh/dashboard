@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -43,6 +42,10 @@ import com.dashboard.vo.Employee;
 import com.dashboard.vo.EmployeeVo;
 import com.dashboard.vo.ProjectVo;
 import com.dashboard.vo.TrainingSchedule;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
 
 @ManagedBean
 @SessionScoped
@@ -268,29 +271,27 @@ public class DashboardBean implements Serializable {
 		return calendar.getTime();
 	}
 
-	private Calendar today() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-				calendar.get(Calendar.DATE), 0, 0, 0);
-
-		return calendar;
-	}
-
-	/*private Date previousDay8Pm() {
-		Calendar t = (Calendar) today().clone();
-		t.set(Calendar.AM_PM, Calendar.PM);
-		t.set(Calendar.DATE, t.get(Calendar.DATE) - 1);
-		t.set(Calendar.HOUR, 8);
-
-		return t.getTime();
-	}*/
-
-
 	public void addEvent(ActionEvent actionEvent) {
         if(event.getId() == null)
             eventModel.addEvent(event);
         else
             eventModel.updateEvent(event);
+        /**Build facebook message*/
+		StringBuffer scrapmessage = new StringBuffer();
+		scrapmessage.append("HI Team, The training titled ")
+				.append(event.getTitle()).append("is scheduled from ")
+				.append(event.getStartDate()).append(" to ")
+				.append(event.getEndDate()).append("... Thanks, Admin Team");
+		/** Call facebook to share the training schedule */
+		FacebookClient client = new DefaultFacebookClient(
+				DashboardConstants.FACEBOOK_APP_TOKEN);
+		FacebookType publishMessageResponse = client.publish(
+				DashboardConstants.FACEBOOK_PUBLISH_TO_ME_STRING,
+				FacebookType.class,
+				Parameter.with("message", scrapmessage.toString()));
+		System.out.println("Published message ID: "
+				+ publishMessageResponse.getId());
+
          
         event = new DefaultScheduleEvent();
     }
@@ -315,14 +316,6 @@ public class DashboardBean implements Serializable {
         addMessage(message);
     }
   
-    private String getRandomId() {
-        return UUID.randomUUID().toString().substring(0, 8);
-    }
-     
-    private int getRandomYear() {
-        return (int) (Math.random() * 50 + 1960);
-    }
-     
 
      
     public int getRandomPrice() {

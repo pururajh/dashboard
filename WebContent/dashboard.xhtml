@@ -46,6 +46,7 @@
 							
 
 						</p:panelGrid>
+						<p:draggable for="employee" grid="20,40" />
 					</p:panel>
 
 					<p:panel id="technology" header="Technology">
@@ -83,17 +84,20 @@
 							</p:column>
 
 						</p:dataTable>
+						<p:draggable for="technology" grid="20,40" />
 
 					</p:panel>
 
 					<p:panel id="experience" header="Experience">
 						<p:chart type="pie" model="#{dashboardBean.pieModel}"
 							style="width:400px;height:300px" />
+						<p:draggable for="experience" grid="20,40" />
 					</p:panel>
 
 					<p:panel id="projects" header="Projects">
 						<p:chart type="bar" model="#{dashboardBean.barModel}"
 							style="width:400px;" />
+						<p:draggable for="projects" grid="20,40" />
 					</p:panel>
 
 					<p:panel id="training" header="Training">

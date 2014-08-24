@@ -1,3 +1,4 @@
+alert("hi facebook app!!");
 PrimeFaces.locales ['en_US'] = {
     closeText: 'Close',
     prevText: 'Previous',
