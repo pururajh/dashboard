@@ -272,29 +272,32 @@ public class DashboardBean implements Serializable {
 	}
 
 	public void addEvent(ActionEvent actionEvent) {
-        if(event.getId() == null)
-            eventModel.addEvent(event);
-        else
-            eventModel.updateEvent(event);
-        /**Build facebook message*/
-		StringBuffer scrapmessage = new StringBuffer();
-		scrapmessage.append("HI Team, The training titled ")
-				.append(event.getTitle()).append("is scheduled from ")
-				.append(event.getStartDate()).append(" to ")
-				.append(event.getEndDate()).append("... Thanks, Admin Team");
-		/** Call facebook to share the training schedule */
-		FacebookClient client = new DefaultFacebookClient(
-				DashboardConstants.FACEBOOK_APP_TOKEN);
-		FacebookType publishMessageResponse = client.publish(
-				DashboardConstants.FACEBOOK_PUBLISH_TO_ME_STRING,
-				FacebookType.class,
-				Parameter.with("message", scrapmessage.toString()));
-		System.out.println("Published message ID: "
-				+ publishMessageResponse.getId());
+		if (event.getId() == null)
+			eventModel.addEvent(event);
+		else
+			eventModel.updateEvent(event);
+		/** Build facebook message if a new training added in the calender */
+		if (event != null && event.getTitle() != null
+				&& event.getTitle().length() > 0) {
+			StringBuffer scrapmessage = new StringBuffer();
+			scrapmessage.append("HI Team, The training titled ")
+					.append(event.getTitle().toUpperCase())
+					.append(" is scheduled from ").append(event.getStartDate())
+					.append(" to ").append(event.getEndDate())
+					.append("... Thanks, Admin Team");
+			/** Call facebook to share the training schedule */
+			FacebookClient client = new DefaultFacebookClient(
+					DashboardConstants.FACEBOOK_APP_TOKEN);
+			FacebookType publishMessageResponse = client.publish(
+					DashboardConstants.FACEBOOK_PUBLISH_TO_ME_STRING,
+					FacebookType.class,
+					Parameter.with("message", scrapmessage.toString()));
+			System.out.println("Published message ID: "
+					+ publishMessageResponse.getId());
+		}
 
-         
-        event = new DefaultScheduleEvent();
-    }
+		event = new DefaultScheduleEvent();
+	}
      
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();
