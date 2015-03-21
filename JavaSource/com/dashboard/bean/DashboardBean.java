@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +69,9 @@ public class DashboardBean implements Serializable {
 	
 	
 	@Autowired
-	private DashboardBo dashboardBo;
+	DashboardBo dashboardBo;
+	
+ 
 	
 	private List<Employee> emplList;
 	private List<ProjectVo> projectList;
@@ -227,15 +230,34 @@ public class DashboardBean implements Serializable {
 		pieModel.setDiameter(300);
 	}
 	
-	private void createCalender() {
-
+	/*private void createCalender() {
+        Map<String,String> viewMap = new HashMap<String, String>();
 		eventModel = new DefaultScheduleModel();
 	
 		try {
 			List<TrainingSchedule> tslist = dashboardBo.getTrainingSchedule();
 			for (TrainingSchedule trainingSchedule : tslist) {
 				eventModel.addEvent(new DefaultScheduleEvent(trainingSchedule.getTrainingName(),
-						trainingSchedule.getStartDate(), trainingSchedule.getEndDate()));
+						trainingSchedule.getStartDate(), trainingSchedule.getEndDate(),trainingSchedule.gettEmployee()));						
+				trainingSchedule.getStartDate(), trainingSchedule.getEndDate()));
+				viewMap.put(event.getId(), trainingSchedule.getTrainingName());
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	
+	}
+	*/
+	private void createCalender() {
+        Map<String,String> viewMap = new HashMap<String, String>();
+		eventModel = new DefaultScheduleModel();
+	    
+		try {
+			List<TrainingSchedule> tslist = dashboardBo.getTrainingSchedule();
+			for (TrainingSchedule trainingSchedule : tslist) {
+				eventModel.addEvent(new DefaultScheduleEvent(trainingSchedule.getTrainingName(),
+						trainingSchedule.getStartDate(), trainingSchedule.getEndDate(),trainingSchedule.gettEmployee()));
+				viewMap.put(event.getId(), trainingSchedule.getTrainingName());
 			}
 		
 		} catch (Exception e) {
@@ -273,9 +295,6 @@ public class DashboardBean implements Serializable {
 		traininAttaineChart.setLabel("Training Attended");
 		for(TrainingAttaine trainingAttainee: attaineList)
 			traininAttaineChart.set(trainingAttainee.getProject(), trainingAttainee.getCountOfEmployee());
-	
-      
-
 
 		model.addSeries(traingConduct);
 		model.addSeries(traininAttaineChart);
@@ -350,6 +369,7 @@ public class DashboardBean implements Serializable {
             schedule.setEndDate(event.getEndDate());
             schedule.setStartDate(event.getStartDate());
             schedule.setTraing(traingVO);
+            schedule.settEmployee((EmployeeVo)event.getData());
             try {
 				dashboardBo.saveTrainingSchedule(schedule);
 				publishToFacebook(event);
@@ -357,7 +377,7 @@ public class DashboardBean implements Serializable {
 				
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
         }
@@ -369,6 +389,7 @@ public class DashboardBean implements Serializable {
             schedule.setEndDate(event.getEndDate());
             schedule.setStartDate(event.getStartDate());
             schedule.setTraing(traingVO);
+            schedule.settEmployee((EmployeeVo)event.getData());
             try {
 				dashboardBo.saveTrainingSchedule(schedule);
 				publishToFacebook(event);
@@ -383,6 +404,27 @@ public class DashboardBean implements Serializable {
         event = new DefaultScheduleEvent();
      
     }
+	
+	public List<EmployeeVo> completeEmployeeList(String query) {
+		List<EmployeeVo> filteredEmployeeVo = new ArrayList<EmployeeVo>();
+		List<EmployeeVo> employeeVoList;
+		try {
+			employeeVoList = dashboardBo.fetchEmployeeVo();
+			HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+			session.setAttribute(DashboardConstants.EMP_SESSION_KEY, employeeVoList);
+
+			for (EmployeeVo employeeVo : employeeVoList) {
+				EmployeeVo selected = employeeVo;
+				if (selected.getFirstName().toLowerCase().startsWith(query)) {
+					filteredEmployeeVo.add(selected);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return filteredEmployeeVo;
+	}
      
     public void onEventSelect(SelectEvent selectEvent) {
         event = (ScheduleEvent) selectEvent.getObject();

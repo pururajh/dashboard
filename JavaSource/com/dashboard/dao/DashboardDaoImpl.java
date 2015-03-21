@@ -204,7 +204,12 @@ public class DashboardDaoImpl {
 
 			session = SessionFactoryUtils.getSession(sessionFactory, true);
 			session.setFlushMode(FlushMode.COMMIT);
-			Query trainingSchedulequery = session
+			Criteria crt = session.createCriteria(TrainingSchedule.class);
+			List<TrainingSchedule>  trainingScheduleList = crt.list();
+			for(TrainingSchedule trSchedule : trainingScheduleList){
+				trSchedule.setTrainingName(trSchedule.getTraing().getName());
+			}
+						/*Query trainingSchedulequery = session
 					.getNamedQuery("findTrainingSchedule");
 			List trainingScheduleList = trainingSchedulequery.list();
 			TrainingSchedule ts = null;
@@ -220,9 +225,9 @@ public class DashboardDaoImpl {
 					tsList.add(ts);
 
 				}
-			}
-			System.out.println("Training Schedule-->" + tsList);
-			return tsList;
+			}*/
+			System.out.println("Training Schedule-->" + trainingScheduleList);
+			return trainingScheduleList;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -294,6 +299,20 @@ public class DashboardDaoImpl {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+	
+	public List<EmployeeVo> fetchEmployeeVo() throws Exception{
+		Session session = null;
+		try {
+			session = SessionFactoryUtils.getSession(sessionFactory, true);
+			session.setFlushMode(FlushMode.COMMIT);
+			Criteria ct = session.createCriteria(EmployeeVo.class);
+			return ct.list();
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
 	}
 
 }

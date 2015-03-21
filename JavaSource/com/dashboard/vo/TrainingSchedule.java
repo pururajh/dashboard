@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TrainingSchedule implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5083444257253107258L;
 	private String trainingName;
 	private Date startDate;
 	private Date endDate;

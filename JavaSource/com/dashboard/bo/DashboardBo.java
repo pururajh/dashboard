@@ -69,5 +69,9 @@ public class DashboardBo {
 	public Map<String,List> fetchtrainingAttaindAndCondectedList() throws Exception {
 		return dashboardDao.fetchtrainingAttaindAndCondectedList();
 	}
+	
+	public List<EmployeeVo> fetchEmployeeVo() throws Exception{
+		return dashboardDao.fetchEmployeeVo();
+	}
 
 }

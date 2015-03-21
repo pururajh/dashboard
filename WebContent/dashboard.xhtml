@@ -133,8 +133,13 @@
 								completeMethod="#{dashboardBean.completeTrainingTitle}" 
 								var="trainingvo" itemLabel="#{trainingvo.name}" itemValue="#{trainingvo}"
 								converter="trainingConverter" forceSelection="true" >
-									
 								</p:autoComplete>
+								
+								<h:outputLabel for="employeeVo" value="Employee:" />
+								<p:autoComplete id="employeeVo" value="#{dashboardBean.event.data}"
+								completeMethod="#{dashboardBean.completeEmployeeList}" 
+								var="employeeVo" itemLabel="#{employeeVo.firstName}" itemValue="#{employeeVo}"
+								converter="employeeConverter" forceSelection="true" />
 
 								<h:outputLabel for="from" value="From:" />
 								<p:inputMask id="from" value="#{dashboardBean.event.startDate}"
